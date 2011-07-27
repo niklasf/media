@@ -16,7 +16,7 @@ require_once dirname(__FILE__) . '/media.pages.inc';
  */
 function media_admin($form, $form_state) {
   global $user;
-  
+
   $path = drupal_get_path('module', 'media');
 
   $form['#attached'] = array(
@@ -31,7 +31,7 @@ function media_admin($form, $form_state) {
 
   require_once dirname(__FILE__) . '/media.browser.inc';
   media_attach_browser_js($form);
-  
+
   $types = media_display_types();
 
   if (arg(3)) {
@@ -286,7 +286,7 @@ function media_admin_type_manage_form($form, &$form_state, $media_type) {
     '#type' => 'value',
     '#value' => $media_type->name,
   );
-  
+
   // If this Media type is handled by us, then we can put in some default
   // options. Otherwise, we leave it to the implementing module to form_alter.
   if ($media_type->type_callback == 'media_is_type') {
@@ -449,7 +449,7 @@ function media_import_validate($form, &$form_state) {
     }
     $pattern = !empty($pattern) ? $pattern :  '*';
     $files = glob("$directory/$pattern");
-    if (count($files) == 1) {
+    if (empty($files)) {
       form_set_error('pattern', t('No files were found in %directory matching %pattern', array('%directory' => $directory, '%pattern' => $pattern)));
     }
     $form_state['storage']['files'] = $files;
