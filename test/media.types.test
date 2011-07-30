@@ -25,7 +25,7 @@ class MediaTypeTest extends DrupalWebTestCase {
   }
 
   private function createType($overrides) {
-    $type = new StdClass();
+    $type = new stdClass();
     $type->name = 'test';
     $type->label = "Test";
     $type->base = TRUE;
@@ -69,7 +69,7 @@ class MediaTypeTest extends DrupalWebTestCase {
     $type = $this->createType(array('name' => 'first', 'label' => 'First'));
     $types = media_type_get_types();
     $keys = array_keys($types);
-    $this->assertTrue(isset($types['last']) && isset($types['first']),"Both types saved");
+    $this->assertTrue(isset($types['last']) && isset($types['first']), "Both types saved");
     $this->assertTrue(array_search('last', $keys) > array_search('first', $keys), 'Type which was supposed to be first came first');
   }
 
