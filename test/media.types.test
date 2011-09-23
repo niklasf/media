@@ -15,6 +15,7 @@ class MediaTypeTest extends DrupalWebTestCase {
       'name' => 'Media types',
       'description' => 'Tests media types',
       'group' => 'Media',
+      'dependencies' => array('ctools'),
     );
   }
 

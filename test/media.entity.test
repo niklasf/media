@@ -15,6 +15,7 @@ class MediaEntityTest extends DrupalWebTestCase {
       'name' => 'Media entity',
       'description' => 'Tests media entity handling',
       'group' => 'Media',
+      'dependencies' => array('ctools'),
     );
   }
 
