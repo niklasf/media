@@ -7,4 +7,3 @@ dependencies[] = image
 files[] = includes/MediaReadOnlyStreamWrapper.inc
 files[] = test/media.types.test
 files[] = test/media.entity.test
-testing_api = 2.x
