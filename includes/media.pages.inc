@@ -48,7 +48,7 @@ function media_preview_ajax() {
  * Menu callback; presents the Media editing form.
  */
 function media_page_edit($file) {
-  drupal_set_title(t('<em>Edit @type</em> @title', array('@type' => $file->type, '@title' => $file->filename)), PASS_THROUGH);
+  drupal_set_title(t('<em>Edit @type</em> @title', array('@type' => ($file->type != FILE_TYPE_NONE ? $file->type : ''), '@title' => $file->filename)), PASS_THROUGH);
   return drupal_get_form('media_edit', $file);
 }
 
@@ -83,7 +83,7 @@ function media_page_multiedit($files) {
  * Menu callback; shows delete confirmation form.
  */
 function media_page_delete($file) {
-  drupal_set_title(t('<em>Delete @type</em> @title', array('@type' => $file->type, '@title' => $file->filename)), PASS_THROUGH);
+  drupal_set_title(t('<em>Delete @type</em> @title', array('@type' => ($file->type != FILE_TYPE_NONE ? $file->type : ''), '@title' => $file->filename)), PASS_THROUGH);
   // Don't bother showing the form if the item is in use, since we won't allow
   // them to delete it anyway.
   $references = file_usage_list($file);
