@@ -106,7 +106,7 @@ function media_admin_list() {
     'type' => array('data' => t('Type'), 'field' => 'f.filemime'),
     'size' => array('data' => t('Size'), 'field' => 'f.filesize'),
     'author' => array('data' => t('Author'), 'field' => 'u.name'),
-    'timestamp' => array('data' => t('Updated'), 'field' => 'f.timestamp', 'sort' => 'DESC'),
+    'timestamp' => array('data' => t('Updated'), 'field' => 'f.timestamp', 'sort' => 'desc'),
     'operations' => array('data' => t('Operations')),
   );
 
