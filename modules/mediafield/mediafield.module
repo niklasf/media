@@ -321,3 +321,108 @@ function mediafield_views_api() {
     'api' => 3,
   );
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter() for field_ui_field_overview_form().
+ */
+function mediafield_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
+  $form['fields']['#header'][6]['colspan']++;
+
+  $fields = field_info_fields();
+
+  foreach ($form['fields'] as $field_name => &$row) {
+    if ($field_name[0] == '#') {
+      continue;
+    }
+
+    if (isset($row['delete']['#href']) && $fields[$field_name]['type'] == 'media') {
+      $row['mediafield_upgrade'] = array(
+        '#type' => 'link',
+        '#title' => t('upgrade'),
+        '#href' => drupal_substr($row['delete']['#href'], 0, -6) . 'mediafield_upgrade',
+        '#options' => array(
+          'attributes' => array(
+            'title' => t('Copy this to a file field.'),
+          ),
+        ),
+      );
+    }
+    elseif (is_array($row)) {
+      $row['mediafield_upgrade'] = array();
+    }
+  }
+}
+
+/**
+ * Implements hook_menu().
+ *
+ * @see field_ui_menu()
+ */
+function mediafield_menu() {
+  $items = array();
+
+  foreach (entity_get_info() as $entity_type => $entity_info) {
+    if ($entity_info['fieldable']) {
+      foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+        if (isset($bundle_info['admin'])) {
+          $access_args = array_intersect_key($bundle_info['admin'], drupal_map_assoc(array('access callback', 'access arguments')));
+          $access_args += array(
+            'access callback' => 'user_access',
+            'access arguments' => array('administer site configuration'),
+          );
+
+          $path = $bundle_info['admin']['path'];
+
+          if (isset($bundle_info['admin']['bundle argument'])) {
+            $bundle_arg = $bundle_info['admin']['bundle argument'];
+            $bundle_pos = (string) $bundle_arg;
+          }
+          else {
+            $bundle_arg = $bundle_name;
+            $bundle_pos = '0';
+          }
+
+          $field_position = count(explode('/', $path)) + 1;
+
+          $items[$path . '/fields/%field_ui_menu/mediafield_upgrade'] = array(
+            'load arguments' => array($entity_type, $bundle_arg, $bundle_pos, '%map'),
+            'title' => 'Upgrade',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('mediafield_upgrade_form', $field_position),
+            'type' => MENU_LOCAL_TASK,
+            'file' => 'mediafield.upgrade.inc',
+            'access callback' => 'mediafield_upgrade_access',
+            'access arguments' => array($field_position, $access_args),
+          );
+        }
+      }
+    }
+  }
+
+  return $items;
+}
+
+/**
+ * Access calback: Checks if the user can access the mediafield upgrade form.
+ *
+ * This access callback ensures that the upgrade form can only be fisplayed for
+ * media fields. If a field is a media field, it does the usual access checks.
+ *
+ * @param $instance
+ *   The field instance.
+ * @param $access_args
+ *   An associative array with 'access callback' and 'access arguments' set.
+ *
+ * @return
+ *   TRUE, if the user can access the mediafield upgrade form for the given
+ *   field.
+ */
+function mediafield_upgrade_access($instance, $access_args) {
+  $field = field_info_field_by_id($instance['field_id']);
+  if ($field['type'] != 'media') {
+    return FALSE;
+  }
+
+  $access_callback = $access_args['access callback'];
+  return call_user_func_array($access_callback, $access_args['access arguments']);
+}
